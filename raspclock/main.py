@@ -13,8 +13,12 @@ class ClockApp():
     def start(self):
         self.__configure_logging()
         self.logger.debug("Start Clock App")
-        zmtstage = stage.ReadZMPStage()
-        zmtstage.run()
+        zmpstage = stage.ReadZMPStage()
+        zmp = zmpstage.run()
+        rtstage = stage.ReadTimesStage(zmp)
+        time_offsets = rtstage.run()
+        ctstage = stage.CheckTimesStage(time_offsets)
+        ctstage.run()
 
     def __configure_logging(self):
         shandler = logging.StreamHandler(stream=sys.stdout)
