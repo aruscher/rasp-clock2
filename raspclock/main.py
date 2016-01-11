@@ -23,7 +23,7 @@ class ClockApp():
     def __configure_logging(self):
         shandler = logging.StreamHandler(stream=sys.stdout)
         fhandler = logging.handlers.RotatingFileHandler("../logs/clock-app.log",backupCount=20)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(thread)d - %(funcName)s - %(message)s')
+        formatter = logging.Formatter('%(levelname)s - %(thread)d - %(funcName)s - %(message)s')
         shandler.setFormatter(formatter)
         fhandler.setFormatter(formatter)
         self.logger = logging.getLogger("logger")

@@ -22,5 +22,8 @@ Anleitung
 3. Eingabe der Zeiten
     * Steuerung: mit dem Zahlenblock die gewünschten MINUTEN:SEKUNDEN eingebnen
     * Bei einer Eingabe einer falschen Zahl kann mittels der "Backspace"-Taste (oben rechts mit dem Pfeil <-) die letzte eingegebene Zahl gelöscht werden
+    * Sollte Sekunden eingeben >60 (welche also eine eine volle Minute beschreiben) werden diese automatisch zu den Minuten dazugerechnet
 4. Kontrolle der Zeiten
     * Sobald Kontrolle auf dem Display steht kann mittels der SELECT-Taste (unter dem Display ganz links) die Kontrolle begonnen werden
+    * Mittels der Hoch-Taste kann der nächste Timer angezeigt werden, mit der Runter-Taste kann der vorige Timer angezeigt werden
+    * Mittels der Rechts-Taste kann die Zeit verändert werden

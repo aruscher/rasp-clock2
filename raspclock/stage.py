@@ -6,12 +6,10 @@ import termios
 from datetime import timedelta
 import threading
 import Queue
-import time
 
-class LCD_Key_Thread(threading.Thread):
-
+class LCDKeyThrad(threading.Thread):
     def __init__(self, queue,lcd,logger):
-        super(LCD_Key_Thread, self).__init__()
+        super(LCDKeyThrad, self).__init__()
         self.queue = queue
         self.lcd = lcd
         self.logger = logger
@@ -74,6 +72,57 @@ class Stage():
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
+    def _read_time(self):
+        time = [0,0,0,0]
+        self.second_line = self._time_to_str(time)
+        self.write_memory_to_display()
+        self.lcd.blink(True)
+        #read every diget of the time
+        cursor_positions = [0,1,3,4]
+        counter = 0
+        while True:
+            #move cursor to corresponding number
+            self.lcd.set_cursor(cursor_positions[counter],1)
+            #read until valid input
+            while True:
+                key = self.get_char_from_keyboard()
+                #accpet only numeric imput
+                if 48 <= ord(key) <= 57:
+                    time[counter] = int(key)
+                    counter += 1
+                    break
+                #backspace for removing last input
+                elif ord(key) == 127:
+                    time[counter-1] = 0
+                    counter -= 1
+                    break
+                #ignore other input
+                else:
+                    continue
+            self.second_line = self._time_to_str(time)
+            self.write_memory_to_display()
+            if counter == len(cursor_positions):
+                break
+        return time
+
+    def _convert_time_to_offset(self,time):
+        minutes = int("%d%d"%(time[0],time[1]))
+        seconds = int("%d%d"%(time[2],time[3]))
+        delta = timedelta(minutes=minutes,seconds=seconds)
+        return delta
+
+    def _time_to_str(self,time):
+        return "%d%d:%d%d"%(time[0],time[1],time[2],time[3])
+
+    def _timedelta_to_str(self,time):
+        time_text = str(time)
+        splitted_time_text = time_text.split(":")
+        splitted_time_ints = [int(elem) for elem in splitted_time_text]
+        time_converted = [splitted_time_ints[0]*60+splitted_time_ints[1],splitted_time_ints[2]]
+        return "%02d:%02d"%(time_converted[0],time_converted[1])
+
+
+
 class ReadZMPStage(Stage):
     def __init__(self):
         Stage.__init__(self)
@@ -126,47 +175,7 @@ class ReadTimesStage(Stage):
             self.time_offsets.append(time_offset)
         return self.time_offsets
 
-    def _read_time(self):
-        time = [0,0,0,0]
-        self.second_line = self._time_to_str(time)
-        self.write_memory_to_display()
-        self.lcd.blink(True)
-        #read every diget of the time
-        cursor_positions = [0,1,3,4]
-        counter = 0
-        while True:
-            #move cursor to corresponding number
-            self.lcd.set_cursor(cursor_positions[counter],1)
-            #read until valid input
-            while True:
-                key = self.get_char_from_keyboard()
-                #accpet only numeric imput
-                if 48 <= ord(key) <= 57:
-                    time[counter] = int(key)
-                    counter += 1
-                    break
-                #backspace for removing last input
-                elif ord(key) == 127:
-                    time[counter-1] = 0
-                    counter -= 1
-                    break
-                #ignore other input
-                else:
-                    continue
-            self.second_line = self._time_to_str(time)
-            self.write_memory_to_display()
-            if counter == len(cursor_positions):
-                break
-        return time
 
-    def _convert_time_to_offset(self,time):
-        minutes = int("%d%d"%(time[0],time[1]))
-        seconds = int("%d%d"%(time[2],time[3]))
-        delta = timedelta(minutes=minutes,seconds=seconds)
-        return delta
-
-    def _time_to_str(self,time):
-        return "%d%d:%d%d"%(time[0],time[1],time[2],time[3])
 
 class CheckTimesStage(Stage):
     def __init__(self,offsets):
@@ -179,7 +188,7 @@ class CheckTimesStage(Stage):
         self.first_line = "Kontrolle!"
         self.second_line = "SELECT"
         self.write_memory_to_display()
-        self.lcd_key_thread = LCD_Key_Thread(self.communication_queue,self.lcd,self.logger)
+        self.lcd_key_thread = LCDKeyThrad(self.communication_queue, self.lcd, self.logger)
         self.lcd_key_thread.start()
         while True:
             pressed_key = self.communication_queue.get()
@@ -191,13 +200,23 @@ class CheckTimesStage(Stage):
 
     def check_times(self):
         current_index = 0
-        current_offset = self.offsets[current_index]
-        while True:
+        self.communication_queue.queue.clear()
+        is_ready = False
+        while not is_ready:
+            current_offset = self.offsets[current_index]
             self.first_line = "Timer %d"%(current_index+1)
             self.second_line = self._timedelta_to_str(current_offset)
             self.write_memory_to_display()
-
-
-    def _timedelta_to_str(self,time):
-        seconds = time.seconds
-        return "%d:%d"%(time.minutes,time.seconds)
+            pressed_key = self.communication_queue.get()
+            if pressed_key == LCD.UP and current_index != len(self.offsets)-1:
+                current_index += 1
+                self.logger.debug("Show next timer")
+            elif pressed_key == LCD.DOWN and current_index > 0:
+                current_index -=1
+                self.logger.debug("Show previous timer")
+            elif pressed_key == LCD.RIGHT:
+                self.logger.debug("Reread timer")
+                time = self._convert_time_to_offset(self._read_time())
+                self.logger.debug("Change timer from %s to %s"%(self.offsets[current_index],time))
+                self.offsets[current_index] = time
+                self.lcd.blink(False)
