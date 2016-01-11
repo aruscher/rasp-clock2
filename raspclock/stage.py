@@ -4,6 +4,43 @@ import sys
 import tty
 import termios
 from datetime import timedelta
+import threading
+import Queue
+import time
+
+class LCD_Key_Thread(threading.Thread):
+
+    def __init__(self, queue,lcd,logger):
+        super(LCD_Key_Thread, self).__init__()
+        self.queue = queue
+        self.lcd = lcd
+        self.logger = logger
+
+    def run(self):
+        self.logger.debug("RUN LCD KEY THREAD")
+        while True:
+            key = self.read_lcd_key()
+            self.logger.debug("Put %s to Key-Queue"%key)
+            self.queue.put(key)
+
+    def read_lcd_key(self):
+        pressed_key = None
+        keys = [LCD.SELECT,LCD.LEFT,LCD.RIGHT,LCD.UP,LCD.DOWN]
+        # read pressed key
+        self.logger.debug("Read Pressed Key")
+        while pressed_key is None :
+            for key in keys:
+                if self.lcd.is_pressed(key):
+                    pressed_key = key
+        self.logger.debug("%s Key was read"%pressed_key)
+        # wait until key is released
+        self.logger.debug("Wait for releasing of key")
+        is_released = False
+        while not is_released:
+            if all([not self.lcd.is_pressed(key) for key in keys]):
+                is_released = True
+        return pressed_key
+
 
 class Stage():
     def __init__(self):
@@ -11,6 +48,9 @@ class Stage():
         self.lcd = LCD.Adafruit_CharLCDPlate()
         self.first_line = ""
         self.second_line = ""
+        self.lcd_key_thread = None
+        self.communication_queue = Queue.Queue()
+
 
     def run(self):
         raise NotImplementedError
@@ -93,21 +133,30 @@ class ReadTimesStage(Stage):
         self.lcd.blink(True)
         #read every diget of the time
         cursor_positions = [0,1,3,4]
-        for i in range(0,len(time)):
+        counter = 0
+        while True:
             #move cursor to corresponding number
-            self.lcd.set_cursor(cursor_positions[i],1)
+            self.lcd.set_cursor(cursor_positions[counter],1)
             #read until valid input
             while True:
                 key = self.get_char_from_keyboard()
                 #accpet only numeric imput
                 if 48 <= ord(key) <= 57:
-                    time[i] = int(key)
+                    time[counter] = int(key)
+                    counter += 1
+                    break
+                #backspace for removing last input
+                elif ord(key) == 127:
+                    time[counter-1] = 0
+                    counter -= 1
                     break
                 #ignore other input
                 else:
                     continue
             self.second_line = self._time_to_str(time)
             self.write_memory_to_display()
+            if counter == len(cursor_positions):
+                break
         return time
 
     def _convert_time_to_offset(self,time):
@@ -127,4 +176,28 @@ class CheckTimesStage(Stage):
 
     def run(self):
         self.logger.debug("Run CT-Stage")
+        self.first_line = "Kontrolle!"
+        self.second_line = "SELECT"
+        self.write_memory_to_display()
+        self.lcd_key_thread = LCD_Key_Thread(self.communication_queue,self.lcd,self.logger)
+        self.lcd_key_thread.start()
+        while True:
+            pressed_key = self.communication_queue.get()
+            if pressed_key == LCD.SELECT:
+                self.check_times()
+                break
         return self.offsets
+
+
+    def check_times(self):
+        current_index = 0
+        current_offset = self.offsets[current_index]
+        while True:
+            self.first_line = "Timer %d"%(current_index+1)
+            self.second_line = self._timedelta_to_str(current_offset)
+            self.write_memory_to_display()
+
+
+    def _timedelta_to_str(self,time):
+        seconds = time.seconds
+        return "%d:%d"%(time.minutes,time.seconds)
