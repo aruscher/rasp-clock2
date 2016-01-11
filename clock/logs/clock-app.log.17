@@ -1,0 +1,35 @@
+2016-01-11 17:21:17,395 - DEBUG - Start Clock App
+2016-01-11 17:21:17,471 - DEBUG - Read ZMP Stage created
+2016-01-11 17:21:17,475 - DEBUG - Run ZMP Stage
+2016-01-11 17:21:17,623 - DEBUG - write 'Zeitmesspunkte:\n' to display
+2016-01-11 17:21:19,728 - DEBUG - write 'Zeitmesspunkte:\n3' to display
+2016-01-11 17:21:21,009 - DEBUG - Read '3' Zeitmesspunkte
+2016-01-11 17:21:21,308 - DEBUG - RT-Stage created
+2016-01-11 17:21:21,313 - DEBUG - Run RT-Stage
+2016-01-11 17:21:21,319 - DEBUG - Read Timer: 1
+2016-01-11 17:21:21,448 - DEBUG - write 'Timer 1:\n00:00' to display
+2016-01-11 17:21:22,526 - DEBUG - write 'Timer 1:\n00:00' to display
+2016-01-11 17:21:22,790 - DEBUG - write 'Timer 1:\n01:00' to display
+2016-01-11 17:21:23,014 - DEBUG - write 'Timer 1:\n01:00' to display
+2016-01-11 17:21:23,368 - DEBUG - write 'Timer 1:\n01:00' to display
+2016-01-11 17:21:23,373 - DEBUG - Read Timer: 01:00
+2016-01-11 17:21:23,379 - DEBUG - Convert Timer to Offset: 0:01:00 hh:mm:ss
+2016-01-11 17:21:23,384 - DEBUG - Read Timer: 2
+2016-01-11 17:21:23,514 - DEBUG - write 'Timer 2:\n00:00' to display
+2016-01-11 17:21:23,671 - DEBUG - write 'Timer 2:\n00:00' to display
+2016-01-11 17:21:23,952 - DEBUG - write 'Timer 2:\n00:00' to display
+2016-01-11 17:21:24,223 - DEBUG - write 'Timer 2:\n00:00' to display
+2016-01-11 17:21:25,142 - DEBUG - write 'Timer 2:\n00:01' to display
+2016-01-11 17:21:25,148 - DEBUG - Read Timer: 00:01
+2016-01-11 17:21:25,153 - DEBUG - Convert Timer to Offset: 0:00:01 hh:mm:ss
+2016-01-11 17:21:25,158 - DEBUG - Read Timer: 3
+2016-01-11 17:21:25,290 - DEBUG - write 'Timer 3:\n00:00' to display
+2016-01-11 17:21:26,223 - DEBUG - write 'Timer 3:\n10:00' to display
+2016-01-11 17:21:26,447 - DEBUG - write 'Timer 3:\n10:00' to display
+2016-01-11 17:21:26,639 - DEBUG - write 'Timer 3:\n10:00' to display
+2016-01-11 17:21:26,799 - DEBUG - write 'Timer 3:\n10:00' to display
+2016-01-11 17:21:26,804 - DEBUG - Read Timer: 10:00
+2016-01-11 17:21:26,809 - DEBUG - Convert Timer to Offset: 0:10:00 hh:mm:ss
+2016-01-11 17:21:26,886 - DEBUG - CT-Stage created
+2016-01-11 17:21:26,891 - DEBUG - Run CT-Stage
+2016-01-11 17:21:27,046 - DEBUG - write 'Kontrolle!\nSELECT' to display

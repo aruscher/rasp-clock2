@@ -1,0 +1,83 @@
+2016-01-11 17:30:11,579 - DEBUG - Start Clock App
+2016-01-11 17:30:11,656 - DEBUG - Read ZMP Stage created
+2016-01-11 17:30:11,661 - DEBUG - Run ZMP Stage
+2016-01-11 17:30:11,808 - DEBUG - write 'Zeitmesspunkte:\n' to display
+2016-01-11 17:30:12,721 - DEBUG - write 'Zeitmesspunkte:\n2' to display
+2016-01-11 17:30:12,763 - DEBUG - Read '2' Zeitmesspunkte
+2016-01-11 17:30:12,840 - DEBUG - RT-Stage created
+2016-01-11 17:30:12,845 - DEBUG - Run RT-Stage
+2016-01-11 17:30:12,851 - DEBUG - Read Timer: 1
+2016-01-11 17:30:12,984 - DEBUG - write 'Timer 1:\n00:00' to display
+2016-01-11 17:30:13,529 - DEBUG - write 'Timer 1:\n10:00' to display
+2016-01-11 17:30:13,786 - DEBUG - write 'Timer 1:\n10:00' to display
+2016-01-11 17:30:13,985 - DEBUG - write 'Timer 1:\n10:00' to display
+2016-01-11 17:30:14,361 - DEBUG - write 'Timer 1:\n10:00' to display
+2016-01-11 17:30:14,366 - DEBUG - Read Timer: 10:00
+2016-01-11 17:30:14,372 - DEBUG - Convert Timer to Offset: 0:10:00 hh:mm:ss
+2016-01-11 17:30:14,377 - DEBUG - Read Timer: 2
+2016-01-11 17:30:14,508 - DEBUG - write 'Timer 2:\n00:00' to display
+2016-01-11 17:30:14,673 - DEBUG - write 'Timer 2:\n20:00' to display
+2016-01-11 17:30:14,881 - DEBUG - write 'Timer 2:\n20:00' to display
+2016-01-11 17:30:15,057 - DEBUG - write 'Timer 2:\n20:00' to display
+2016-01-11 17:30:15,489 - DEBUG - write 'Timer 2:\n20:00' to display
+2016-01-11 17:30:15,494 - DEBUG - Read Timer: 20:00
+2016-01-11 17:30:15,499 - DEBUG - Convert Timer to Offset: 0:20:00 hh:mm:ss
+2016-01-11 17:30:15,575 - DEBUG - CT-Stage created
+2016-01-11 17:30:15,580 - DEBUG - Run CT-Stage
+2016-01-11 17:30:15,734 - DEBUG - write 'Kontrolle!\nSELECT' to display
+2016-01-11 17:30:15,740 - DEBUG - RUN LCD KEY THREAD
+2016-01-11 17:30:17,771 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:17,980 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:18,188 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:18,396 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:18,605 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:18,813 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:19,025 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:19,233 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:19,441 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:19,649 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:20,075 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:20,284 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:20,492 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:20,701 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:21,048 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:21,256 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:21,464 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:21,672 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:21,881 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:22,153 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:22,416 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:22,667 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:23,377 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:23,895 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:30:25,320 - DEBUG - Put 3 to Key-Queue
+2016-01-11 17:30:27,290 - DEBUG - Put 3 to Key-Queue
+2016-01-11 17:30:28,162 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:28,455 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:28,786 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:29,147 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:29,778 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:30,236 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:30,558 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:30,841 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:31,116 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:31,370 - DEBUG - Put 0 to Key-Queue
+2016-01-11 17:30:32,027 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:32,332 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:32,565 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:32,777 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:32,984 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:33,192 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:33,493 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:33,700 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:33,985 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:34,193 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:34,801 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:35,009 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:35,216 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:35,467 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:35,674 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:30:35,882 - DEBUG - Put 4 to Key-Queue
+2016-01-11 17:31:35,259 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:31:36,106 - DEBUG - Put 1 to Key-Queue
+2016-01-11 17:31:36,874 - DEBUG - Put 1 to Key-Queue
