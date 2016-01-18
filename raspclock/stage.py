@@ -262,16 +262,28 @@ class ClockRunningStage(Stage):
     def run(self):
         self.logger.debug("CRS-Stage run")
         current_index = 0
-        self.first_line = "Timer %d"%(current_index+1)
-        self.write_memory_to_display()
         ticker = TickThread(self.communication_queue)
         ticker.start()
         while True:
             event = self.communication_queue.get()
             if event == 8:
-                rest_time = self.calculate_remaining_time(self.offsets[0])
+                rest_time = self.calculate_remaining_time(self.offsets[current_index])
+                if rest_time.days < 0:
+                    current_index+=1
+                    if current_index == len(self.offsets):
+                        break
+                    rest_time = self.calculate_remaining_time(self.offsets[current_index])
+                self.logger.debug("Rest Time: %s"%rest_time)
+                self.first_line = "%d"%(current_index+1)
                 self.second_line = self.timedelta_to_str(rest_time)
                 self.write_memory_to_display()
+            elif event == LCD.UP and current_index < len(self.offsets)-1:
+                current_index +=1
+                self.communication_queue.put(8)
+            elif event == LCD.DOWN and current_index > 0:
+                current_index -=1
+                self.communication_queue.put(8)
+        self.write_msg_to_display("Fertig")
         return
 
     def calculate_remaining_time(self,offset):
