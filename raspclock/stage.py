@@ -195,6 +195,8 @@ class CheckTimesStage(Stage):
             if pressed_key == LCD.SELECT:
                 self.check_times()
                 break
+        self.logger.debug("Complete timer controll")
+        self.logger.debug("Saved Timers: %s"%[self._timedelta_to_str(offset) for offset in self.offsets])
         return self.offsets
 
 
@@ -220,3 +222,11 @@ class CheckTimesStage(Stage):
                 self.logger.debug("Change timer from %s to %s"%(self.offsets[current_index],time))
                 self.offsets[current_index] = time
                 self.lcd.blink(False)
+            elif pressed_key == LCD.LEFT:
+                return
+
+class WaitForStartStage(Stage):
+    def __init__(self):
+        Stage.__init__(self)
+        self.logger.debug("WFS-Stage created")
+

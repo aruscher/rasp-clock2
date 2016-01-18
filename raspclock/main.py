@@ -18,7 +18,10 @@ class ClockApp():
         rtstage = stage.ReadTimesStage(zmp)
         time_offsets = rtstage.run()
         ctstage = stage.CheckTimesStage(time_offsets)
-        ctstage.run()
+        checked_time_offsets = ctstage.run()
+        wfsstage = stage.WaitForStartStage()
+
+
 
     def __configure_logging(self):
         shandler = logging.StreamHandler(stream=sys.stdout)

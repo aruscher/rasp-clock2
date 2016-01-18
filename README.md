@@ -25,5 +25,5 @@ Anleitung
     * Sollte Sekunden eingeben >60 (welche also eine eine volle Minute beschreiben) werden diese automatisch zu den Minuten dazugerechnet
 4. Kontrolle der Zeiten
     * Sobald Kontrolle auf dem Display steht kann mittels der SELECT-Taste (unter dem Display ganz links) die Kontrolle begonnen werden
-    * Mittels der Hoch-Taste kann der nächste Timer angezeigt werden, mit der Runter-Taste kann der vorige Timer angezeigt werden
-    * Mittels der Rechts-Taste kann die Zeit verändert werden
+    * Mittels der HOCH-Taste kann der nächste Timer angezeigt werden, mit der RUNTER-Taste kann der vorige Timer angezeigt werden
+    * Mittels der RECHTS-Taste kann die Zeit verändert werden -> Steuerung dazu wie bei 3.
