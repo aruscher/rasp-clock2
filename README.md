@@ -37,7 +37,6 @@ Anleitung
 
 Offen
 -----
-* Kopfhörer
 * Pieper
 
 

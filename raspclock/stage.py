@@ -8,6 +8,7 @@ import threading
 from math import ceil
 import time
 import os
+import RPi.GPIO as GPIO
 
 class LCDKeyThrad(threading.Thread):
     def __init__(self, queue, lcd, logger):
@@ -54,6 +55,27 @@ class SoundThread(threading.Thread):
 
     def play(self):
         self.sound_flag = True
+
+class BeeperThread(threading.Thread):
+    def __init__(self):
+        super(BeeperThread, self).__init__()
+        self.beep_flag = False
+        self.port = 8
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.port, GPIO.OUT)
+
+    def run(self):
+        while True:
+            if self.beep_flag:
+                GPIO.output(self.port,True)
+                time.sleep(0.5)
+                GPIO.output(self.port,False)
+
+                self.beep_flag = False
+
+    def beep(self):
+        self.beep_flag = True
 
 class TickThread(threading.Thread):
     def __init__(self,queue):
@@ -300,7 +322,8 @@ class ClockRunningStage(Stage):
         displayer.start()
         sound = SoundThread()
         sound.start()
-
+        beeper = BeeperThread()
+        beeper.start()
         while True:
             event = self.communication_queue.get()
             if event == 8:
@@ -312,6 +335,7 @@ class ClockRunningStage(Stage):
                     rest_time = self.calculate_remaining_time(self.offsets[current_index])
                 elif rest_time <= 10:
                     sound.play()
+                    beeper.beep()
                 self.logger.debug("Rest Time: %s"%rest_time)
                 displayer.set_message("Timer %d\n%s"%(current_index+1,self.seconds_to_str(rest_time)))
             elif event == LCD.UP and current_index < len(self.offsets)-1:
