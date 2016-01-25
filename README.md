@@ -27,3 +27,17 @@ Anleitung
     * Sobald Kontrolle auf dem Display steht kann mittels der SELECT-Taste (unter dem Display ganz links) die Kontrolle begonnen werden
     * Mittels der HOCH-Taste kann der nächste Timer angezeigt werden, mit der RUNTER-Taste kann der vorige Timer angezeigt werden
     * Mittels der RECHTS-Taste kann die Zeit verändert werden -> Steuerung dazu wie bei 3.
+5. Scharfschaltung
+    * Die eingestellten Zeiten sind "scharf" geschaltet
+    * mit der RECHTS-Taste können die Timer gestartet werden
+6. Timer laufen
+    * Wenn alle Timer fertig sind steht "Fertig" auf den Display
+    * mit der HOCH-Tasge kann der nächste Timer angezeigt werden
+    * mit der RUNTER-Tasge kann der vorrige Timer angezeigt werden falls dieser noch nicht abgelaufen ist
+    * manchmal wird 2mal die gleiche 
+Verbesserungen
+--------------
+* übersichtlicherer Code
+* bessere Anleitung/Dokumentation
+* vernünftige Logging-Mechanismus um Fehler zu finden
+* genauigkeit von paar Microsekunden

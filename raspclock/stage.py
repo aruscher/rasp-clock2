@@ -5,7 +5,7 @@ import tty
 import termios
 from datetime import timedelta,datetime
 import threading
-from math import floor
+from math import ceil
 import time
 
 class LCDKeyThrad(threading.Thread):
@@ -50,6 +50,24 @@ class TickThread(threading.Thread):
         while True:
             self.queue.put(8)
             time.sleep(1)
+
+class DisplayThread(threading.Thread):
+    def __init__(self,lcd):
+        super(DisplayThread, self).__init__()
+        self.lcd = lcd
+        self.message = ""
+        self.flag = False
+
+    def run(self):
+        while True:
+            if self.flag:
+                self.lcd.clear()
+                self.lcd.message(self.message)
+                self.flag = False
+
+    def set_message(self,msg):
+        self.flag = True
+        self.message = msg
 
 class Stage():
     def __init__(self,queue):
@@ -127,7 +145,7 @@ class Stage():
     def timedelta_to_str(self, time):
         time_text = str(time)
         splitted_time_text = time_text.split(":")
-        splitted_time_ints = [int(floor(float(elem))) for elem in splitted_time_text]
+        splitted_time_ints = [int(ceil(float(elem))) for elem in splitted_time_text]
         time_converted = [splitted_time_ints[0] * 60 + splitted_time_ints[1], splitted_time_ints[2]]
         return "%02d:%02d" % (time_converted[0], time_converted[1])
 
@@ -264,19 +282,19 @@ class ClockRunningStage(Stage):
         current_index = 0
         ticker = TickThread(self.communication_queue)
         ticker.start()
+        displayer = DisplayThread(self.lcd)
+        displayer.start()
         while True:
             event = self.communication_queue.get()
             if event == 8:
                 rest_time = self.calculate_remaining_time(self.offsets[current_index])
-                if rest_time.days < 0:
+                if rest_time <= 0:
                     current_index+=1
-                    if current_index == len(self.offsets):
+                    if current_index >= len(self.offsets):
                         break
                     rest_time = self.calculate_remaining_time(self.offsets[current_index])
                 self.logger.debug("Rest Time: %s"%rest_time)
-                self.first_line = "%d"%(current_index+1)
-                self.second_line = self.timedelta_to_str(rest_time)
-                self.write_memory_to_display()
+                displayer.set_message("Timer %d\n%s"%(current_index+1,self.seconds_to_str(rest_time)))
             elif event == LCD.UP and current_index < len(self.offsets)-1:
                 current_index +=1
                 self.communication_queue.put(8)
@@ -287,6 +305,14 @@ class ClockRunningStage(Stage):
         return
 
     def calculate_remaining_time(self,offset):
-        end_date = self.reference_point + offset
-        rest_time = end_date-datetime.now()
-        return rest_time
+        now = datetime.now()
+        ref = self.reference_point
+        ref_seconds = (ref.hour*60+ref.minute)*60+ref.second
+        now_seconds = (now.hour*60+now.minute)*60+now.second
+        rest_seconds = ref_seconds+offset.seconds-now_seconds
+        return rest_seconds
+
+    def seconds_to_str(self,seconds):
+        minutes = seconds //60
+        seconds %= 60
+        return "%02d:%02d"%(minutes,seconds)
