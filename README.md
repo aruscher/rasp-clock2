@@ -34,7 +34,13 @@ Anleitung
     * Wenn alle Timer fertig sind steht "Fertig" auf den Display
     * mit der HOCH-Tasge kann der nächste Timer angezeigt werden
     * mit der RUNTER-Tasge kann der vorrige Timer angezeigt werden falls dieser noch nicht abgelaufen ist
-    * manchmal wird 2mal die gleiche 
+
+Offen
+-----
+* Kopfhörer
+* Pieper
+
+
 Verbesserungen
 --------------
 * übersichtlicherer Code

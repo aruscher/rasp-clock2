@@ -7,6 +7,7 @@ from datetime import timedelta,datetime
 import threading
 from math import ceil
 import time
+import os
 
 class LCDKeyThrad(threading.Thread):
     def __init__(self, queue, lcd, logger):
@@ -40,6 +41,19 @@ class LCDKeyThrad(threading.Thread):
                 is_released = True
         return pressed_key
 
+class SoundThread(threading.Thread):
+    def __init__(self):
+        super(SoundThread, self).__init__()
+        self.sound_flag = False
+
+    def run(self):
+        while True:
+            if self.sound_flag:
+                os.system("aplay /home/pi/clock/raspclock/match1.wav")
+                self.sound_flag = False
+
+    def play(self):
+        self.sound_flag = True
 
 class TickThread(threading.Thread):
     def __init__(self,queue):
@@ -284,6 +298,9 @@ class ClockRunningStage(Stage):
         ticker.start()
         displayer = DisplayThread(self.lcd)
         displayer.start()
+        sound = SoundThread()
+        sound.start()
+
         while True:
             event = self.communication_queue.get()
             if event == 8:
@@ -293,6 +310,8 @@ class ClockRunningStage(Stage):
                     if current_index >= len(self.offsets):
                         break
                     rest_time = self.calculate_remaining_time(self.offsets[current_index])
+                elif rest_time <= 10:
+                    sound.play()
                 self.logger.debug("Rest Time: %s"%rest_time)
                 displayer.set_message("Timer %d\n%s"%(current_index+1,self.seconds_to_str(rest_time)))
             elif event == LCD.UP and current_index < len(self.offsets)-1:
