@@ -34,10 +34,10 @@ Anleitung
     * Wenn alle Timer fertig sind steht "Fertig" auf den Display
     * mit der HOCH-Tasge kann der nächste Timer angezeigt werden
     * mit der RUNTER-Tasge kann der vorrige Timer angezeigt werden falls dieser noch nicht abgelaufen ist
-
+    * in den letzten 10 Sekunden kommt ein Ton über die Kopfhörer und das Gerät piept auch
+    
 Offen
 -----
-* Pieper
 
 
 Verbesserungen
