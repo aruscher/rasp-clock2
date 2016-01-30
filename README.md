@@ -35,9 +35,7 @@ Anleitung
     * mit der HOCH-Tasge kann der nächste Timer angezeigt werden
     * mit der RUNTER-Tasge kann der vorrige Timer angezeigt werden falls dieser noch nicht abgelaufen ist
     * in den letzten 10 Sekunden kommt ein Ton über die Kopfhörer und das Gerät piept auch
-    
-Offen
------
+
 
 
 Verbesserungen
@@ -46,3 +44,44 @@ Verbesserungen
 * bessere Anleitung/Dokumentation
 * vernünftige Logging-Mechanismus um Fehler zu finden
 * genauigkeit von paar Microsekunden
+
+
+
+
+    def run(self):
+        self.logger.debug("CRS-Stage run")
+        current_index = 0
+        ticker = BetterTick(self.communication_queue)
+        ticker.start()
+        #displayer = DisplayThread(self.lcd)
+        #displayer.start()
+        sound = SoundThread()
+        sound.start()
+        beeper = BeeperThread()
+        beeper.start()
+        while True:
+            event = self.communication_queue.get()
+            if event == 8:
+                rest_time = self.calculate_remaining_time(self.offsets[current_index])
+                if rest_time <= 0:
+                    current_index+=1
+                    if current_index >= len(self.offsets):
+                        break
+                    rest_time = self.calculate_remaining_time(self.offsets[current_index])
+                elif rest_time <= 10:
+                    #sound.play()
+                    #beeper.beep()
+                    pass
+                self.logger.debug("Rest Time: %s"%rest_time)
+                #displayer.set_message("Timer %d\n%s"%(current_index+1,self.seconds_to_str(rest_time)))
+            elif event == LCD.UP and current_index < len(self.offsets)-1:
+                current_index +=1
+                self.communication_queue.put(8)
+            elif event == LCD.DOWN and current_index > 0:
+                current_index -=1
+                self.communication_queue.put(8)
+        ticker.stop()
+        self.write_msg_to_display("Fertig")
+        now = datetime.now()
+        self.logger.debug("Time taken: %s"%(now - self.reference_point))
+        return

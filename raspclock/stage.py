@@ -69,7 +69,7 @@ class BeeperThread(threading.Thread):
         while True:
             if self.beep_flag:
                 GPIO.output(self.port,True)
-                time.sleep(0.5)
+                time.sleep(0.9)
                 GPIO.output(self.port,False)
 
                 self.beep_flag = False
@@ -85,25 +85,64 @@ class TickThread(threading.Thread):
     def run(self):
         while True:
             self.queue.put(8)
-            time.sleep(1)
+            time.sleep(0.8)
+
+
+class BetterTick(threading.Thread):
+    def __init__(self,queue):
+        super(BetterTick, self).__init__()
+        self.queue = queue
+        self.flag = True
+
+    def run(self):
+        last_call  = time.time()
+        while self.flag == True:
+            current = time.time()
+            if current -  last_call>= 1:
+                self.queue.put(8)
+                last_call = current
+
+    def stop(self):
+        self.flag = False
 
 class DisplayThread(threading.Thread):
     def __init__(self,lcd):
         super(DisplayThread, self).__init__()
         self.lcd = lcd
-        self.message = ""
-        self.flag = False
+        self.second_line = ""
+        self.second_line_flag = False
+        self.first_line = ""
+        self.first_line_flag = False
+        self.run_flag = True
 
     def run(self):
-        while True:
-            if self.flag:
-                self.lcd.clear()
-                self.lcd.message(self.message)
-                self.flag = False
+        while  self.run_flag:
+            if self.first_line_flag:
+                self.lcd.set_cursor(0, 0)
+                for char in self.first_line:
+                    self.lcd.write8(ord(char), True)
+                self.first_line_flag = False
+            if self.second_line_flag:
+                self.lcd.set_cursor(0, 1)
+                for char in self.second_line:
+                    self.lcd.write8(ord(char), True)
+                self.second_line_flag = False
 
     def set_message(self,msg):
         self.flag = True
         self.message = msg
+
+    def write_second_line(self,text):
+        self.second_line = text
+        self.second_line_flag = True
+
+    def write_first_line(self,text):
+        self.first_line = text
+        self.first_line_flag = True
+
+    def stop(self):
+        self.run_flag = False
+        self.lcd.clear()
 
 class Stage():
     def __init__(self,queue):
@@ -119,6 +158,7 @@ class Stage():
 
     def write_msg_to_display(self, msg):
         self.lcd.clear()
+        self.lcd.set_cursor(0,0)
         self.lcd.message(msg)
         self.logger.debug("write '%s' to display" % msg.replace("\n", "\\n"))
 
@@ -311,12 +351,13 @@ class ClockRunningStage(Stage):
         self.logger.debug("CRS-Stage created")
         self.offsets = offsets
         self.reference_point = datetime.now()
+        self.reference_point2 = time.time()
         self.logger.info("Timer reference point: %s"%self.reference_point)
 
     def run(self):
         self.logger.debug("CRS-Stage run")
         current_index = 0
-        ticker = TickThread(self.communication_queue)
+        ticker = BetterTick(self.communication_queue)
         ticker.start()
         displayer = DisplayThread(self.lcd)
         displayer.start()
@@ -324,26 +365,39 @@ class ClockRunningStage(Stage):
         sound.start()
         beeper = BeeperThread()
         beeper.start()
+        event = None
+        displayer.write_first_line("Timer 1")
+        old_rest = -1
         while True:
-            event = self.communication_queue.get()
-            if event == 8:
-                rest_time = self.calculate_remaining_time(self.offsets[current_index])
-                if rest_time <= 0:
-                    current_index+=1
-                    if current_index >= len(self.offsets):
-                        break
-                    rest_time = self.calculate_remaining_time(self.offsets[current_index])
-                elif rest_time <= 10:
-                    sound.play()
-                    beeper.beep()
+            rest_time = self.calculate_remaining_time(self.offsets[current_index])
+            if old_rest != rest_time:
+                displayer.write_second_line(self.seconds_to_str(rest_time))
+                old_rest = rest_time
                 self.logger.debug("Rest Time: %s"%rest_time)
-                displayer.set_message("Timer %d\n%s"%(current_index+1,self.seconds_to_str(rest_time)))
-            elif event == LCD.UP and current_index < len(self.offsets)-1:
+            if rest_time <= 0:
+                current_index+=1
+                displayer.write_first_line("Timer %d"%(current_index+1))
+                if current_index >= len(self.offsets):
+                    break
+                rest_time = self.calculate_remaining_time(self.offsets[current_index])
+            elif rest_time <= 10:
+                sound.play()
+                beeper.beep()
+            try:
+                event = self.communication_queue.get_nowait()
+            except Exception:
+                event = None
+            if event == LCD.UP and current_index < len(self.offsets)-1:
                 current_index +=1
-                self.communication_queue.put(8)
+                displayer.write_first_line("Timer %d"%(current_index+1))
             elif event == LCD.DOWN and current_index > 0:
                 current_index -=1
-                self.communication_queue.put(8)
+                displayer.write_first_line("Timer %d"%(current_index+1))
+        self.logger.debug("Taken Time: %s"%(time.time()-self.reference_point2))
+        ticker.stop()
+        displayer.stop()
+        time.sleep(0.5)
+        self.lcd.clear()
         self.write_msg_to_display("Fertig")
         return
 
@@ -353,6 +407,7 @@ class ClockRunningStage(Stage):
         ref_seconds = (ref.hour*60+ref.minute)*60+ref.second
         now_seconds = (now.hour*60+now.minute)*60+now.second
         rest_seconds = ref_seconds+offset.seconds-now_seconds
+        #self.logger.debug("Time difference: %f"%(offset.seconds-self.reference_point2-time.time()))
         return rest_seconds
 
     def seconds_to_str(self,seconds):
